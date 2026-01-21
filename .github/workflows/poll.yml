@@ -1,14 +1,13 @@
-name: CDC Class 2B Theory Watcher
+name: CDC Slot Checker
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # every 5 minutes
+    - cron: "*/30 * * * *"   # every 30 minutes
   workflow_dispatch:
 
 jobs:
   check:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -21,13 +20,7 @@ jobs:
         run: pip install requests
 
       - name: Run checker
-        run: python check_cdc.py
         env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-
-      - name: Save state
-        uses: EndBug/add-and-commit@v9
-        with:
-          message: "Update last notified date"
-          add: "last_date.json"
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+          CHAT_ID: ${{ secrets.CHAT_ID }}
+        run: python check_slot.py
