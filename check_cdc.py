@@ -3,7 +3,7 @@ import json
 import os
 from pathlib import Path
 
-API_URL = "https://enrol.cdc.com.sg/wscdctestdate/api/testsate/"
+API_URL = "https://enrol.cdc.com.sg/wscdctestdate/api/testdate/"
 STATE_FILE = "last_date.json"
 
 BOT_TOKEN = os.environ["TELEGRAM_BOT_TOKEN"]
