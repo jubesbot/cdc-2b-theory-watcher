@@ -3,11 +3,21 @@ import os
 from datetime import datetime
 
 API_URL = "https://enrol.cdc.com.sg/wscdctestdate/api/testdate/"
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
+if not BOT_TOKEN or not CHAT_ID:
+    raise RuntimeError("BOT_TOKEN or CHAT_ID not set")
 
 resp = requests.get(API_URL, timeout=10)
-data = resp.json()
+
+try:
+    data = resp.json()
+except Exception:
+    print("Non-JSON response from API")
+    print(resp.text[:300])
+    exit(0)
 
 for course in data.get("courses", []):
     if course.get("description") == "Class 2B Riding Theory Test":
@@ -17,8 +27,7 @@ for course in data.get("courses", []):
             message = "No slot yet."
         else:
             try:
-                dt = datetime.strptime(date, "%d/%m/%Y")
-                day = dt.strftime("%A")
+                day = datetime.strptime(date, "%d/%m/%Y").strftime("%A")
             except Exception:
                 day = "Unknown"
 
@@ -34,7 +43,8 @@ for course in data.get("courses", []):
                 "chat_id": CHAT_ID,
                 "text": message,
                 "parse_mode": "Markdown"
-            }
+            },
+            timeout=10
         )
 
         break
